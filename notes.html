@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taufik Workspace | Notes</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="assets/notes.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">TN</div>
+                <div class="logo-text">
+                    <h3>Taufik<span>Notes</span></h3>
+                    <p>Workspace Manager</p>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <p class="menu-label">MENU UTAMA</p>
+                <button class="nav-btn active" onclick="filterNotes('all')">
+                    <span class="icon">🏠</span> Semua Catatan
+                </button>
+                <button class="nav-btn" onclick="filterNotes('pinned')">
+                    <span class="icon">📌</span> Penting / Pinned
+                </button>
+
+                <p class="menu-label">KATEGORI</p>
+                <button class="nav-btn" onclick="filterNotes('Ide')">
+                    <span class="icon">💡</span> Ide Konten
+                </button>
+                <button class="nav-btn" onclick="filterNotes('Project')">
+                    <span class="icon">💼</span> Project Dihidang
+                </button>
+                <button class="nav-btn" onclick="filterNotes('Personal')">
+                    <span class="icon">🔒</span> Catatan Pribadi
+                </button>
+                <button class="nav-btn" onclick="filterNotes('Revisi')">
+                    <span class="icon">📝</span> Revisi Client
+                </button>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="stats-box">
+                    <span id="total-notes">0</span>
+                    <small>Total Notes</small>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            
+            <header class="top-header">
+                <div class="welcome-text">
+                    <h2 id="greeting">Selamat Pagi, Bro!</h2>
+                    <p>Mau catat ide brilian apa hari ini?</p>
+                </div>
+                <div class="action-area">
+                    <div class="search-bar">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="searchInput" placeholder="Cari catatan..." autocomplete="off">
+                    </div>
+                    <button class="btn-create" onclick="openModal()">
+                        <span>+</span> Buat Baru
+                    </button>
+                </div>
+            </header>
+
+            <div id="notes-grid" class="notes-grid">
+                </div>
+
+        </main>
+    </div>
+
+    <div id="noteModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Tulis Catatan</h3>
+                <button class="btn-close" onclick="closeModal()">✕</button>
+            </div>
+            
+            <div class="modal-body">
+                <input type="hidden" id="noteId">
+                
+                <div class="form-group">
+                    <input type="text" id="inputTitle" placeholder="Judul Catatan..." class="input-title">
+                </div>
+
+                <div class="form-group row">
+                    <select id="inputCategory" class="input-select">
+                        <option value="Ide">💡 Ide Konten</option>
+                        <option value="Project">💼 Project Dihidang</option>
+                        <option value="Personal">🔒 Pribadi</option>
+                        <option value="Revisi">📝 Revisi</option>
+                    </select>
+                    
+                    <div class="color-picker">
+                        <div class="color-opt active" data-color="#ffffff" style="background:#ffffff; border:1px solid #ddd;"></div>
+                        <div class="color-opt" data-color="#fff8e1" style="background:#fff8e1;"></div>
+                        <div class="color-opt" data-color="#e3f2fd" style="background:#e3f2fd;"></div>
+                        <div class="color-opt" data-color="#e8f5e9" style="background:#e8f5e9;"></div>
+                        <div class="color-opt" data-color="#f3e5f5" style="background:#f3e5f5;"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <textarea id="inputBody" placeholder="Ketik detailnya di sini..." class="input-body"></textarea>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <span id="lastEdited" class="edit-info"></span>
+                <button class="btn-save" onclick="saveNote()">Simpan Catatan</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/notes.js"></script>
+</body>
+</html>

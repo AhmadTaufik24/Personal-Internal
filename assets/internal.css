@@ -1,0 +1,189 @@
+/* --- 1. ROOT VARIABLES (WARNA PROFILE TAUFIK) --- */
+:root {
+    --bg-color: #fdfdfd;
+    --text-main: #1a1a1a;
+    --text-sub: #666666;
+    --navbar-bg: rgba(255, 255, 255, 0.8);
+    --navbar-border: #e0e0e0;
+    
+    /* Warna Branding Utama */
+    --primary: #456d91;       /* Biru Taufik */
+    --highlight: #5d9bd6;     /* Biru Terang */
+    --accent-bg: #f4f8fb;     /* Biru Muda Pucat */
+    
+    --card-bg: #ffffff;
+    --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', 'Inter', sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 3rem 2rem;
+    background-image: radial-gradient(circle at 10% 20%, rgba(69, 109, 145, 0.03) 0%, transparent 20%);
+}
+
+/* --- 2. HEADER SECTION --- */
+header {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto 4rem auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 1px solid var(--navbar-border);
+    padding-bottom: 2rem;
+}
+
+.header-content h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.header-content p {
+    font-size: 0.9rem;
+    color: var(--text-sub);
+    margin-top: 5px;
+}
+
+.header-time {
+    text-align: right;
+}
+
+#clock {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--primary);
+}
+
+#greeting {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- 3. GRID NAVIGATION --- */
+main {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 25px;
+}
+
+.section-label {
+    grid-column: 1 / -1;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-sub);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 700;
+    opacity: 0.8;
+}
+
+.section-label:first-child { margin-top: 0; }
+
+/* --- 4. NAV CARD STYLING --- */
+.nav-card {
+    background: var(--card-bg);
+    border: 1px solid var(--navbar-border);
+    border-radius: 12px;
+    padding: 30px;
+    text-decoration: none;
+    transition: var(--transition);
+    border-left: 4px solid var(--primary); /* Aksen Biru Profile */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 4px 12px rgba(0,0,0,0.03);
+}
+
+.nav-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(69, 109, 145, 0.12);
+    border-color: var(--primary);
+}
+
+/* Icon Box */
+.icon-box {
+    width: 45px;
+    height: 45px;
+    background: var(--accent-bg);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: var(--transition);
+}
+
+.icon-box i {
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.nav-card:hover .icon-box {
+    background: var(--primary);
+}
+
+.nav-card:hover .icon-box i {
+    color: white;
+}
+
+/* Card Content */
+.nav-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 8px;
+}
+
+.nav-card p {
+    font-size: 0.85rem;
+    color: var(--text-sub);
+    line-height: 1.5;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+    header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+    .header-time { text-align: left; }
+    body { padding: 2rem 1rem; }
+}
+
+/* Styling Utama yang Seragam untuk Semua Box */
+.nav-card {
+    background: var(--card-bg);
+    border: 1px solid var(--navbar-border);
+    border-radius: 12px;
+    padding: 30px;
+    text-decoration: none;
+    transition: var(--transition);
+    border-left: 4px solid var(--primary); /* Identitas Biru Taufik */
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 4px 12px rgba(0,0,0,0.03);
+}
+
+.nav-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(69, 109, 145, 0.12);
+    border-color: var(--primary);
+}

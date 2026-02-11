@@ -1,5 +1,5 @@
 // ==========================================
-// TAUFIK FINANCE - ULTIMATE ENGINE (FULL FIXED)
+// TAUFIK FINANCE - STABLE ENGINE (ANTI-NaN)
 // ==========================================
 
 // --- 1. KONFIGURASI ---
@@ -86,17 +86,25 @@ function setFilter(type) {
 }
 
 // ==========================================
-// 6. CORE CALCULATION (FIXED LOGIC)
+// 6. CORE CALCULATION (FIXED)
 // ==========================================
 function getAllTransactions() {
     let allData = [];
+    
+    // Data Job Board
     jobOrders.forEach(jo => {
         if (jo.stage === 'done') {
             let price = (jo.type === 'Adjust' || jo.category === 'General') ? (jo.manualPrice || 0) : 
                         (jo.type === 'Story' ? RATES.story : jo.type === 'Reels' ? RATES.reels : RATES.feed * (jo.slides || 1));
+            
+            // SAFETY CHECK: Pastikan price adalah angka
+            if (isNaN(price) || price === null) price = 0;
+            
             allData.push({ id: jo.id, title: jo.title, amount: price, type: 'income', category: 'Freelance', date: jo.archivedDate, isAuto: true });
         }
     });
+
+    // Data Manual
     allData = [...allData, ...manualTrans];
     return allData.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
@@ -121,19 +129,23 @@ function renderDashboard() {
     const data = getFilteredData();
     const allData = getAllTransactions();
 
-    // --- LOGIKA SALDO YANG BENAR ---
-    // Cukup: Total Pemasukan - Total Pengeluaran
-    // Karena saat input hutang, sudah otomatis masuk sebagai Pengeluaran (Beban Hutang) di tabel.
-    const realBalance = allData.reduce((acc, cur) => cur.type === 'income' ? acc + cur.amount : acc - cur.amount, 0);
-    document.getElementById('wallet-balance').innerText = formatRp(realBalance);
-    // -------------------------------
+    // 1. Hitung Saldo Real
+    const realBalance = allData.reduce((acc, cur) => {
+        const val = cur.amount || 0; // Anti NaN
+        return cur.type === 'income' ? acc + val : acc - val;
+    }, 0);
 
+    document.getElementById('wallet-balance').innerText = formatRp(realBalance);
+
+    // 2. Hitung Statistik
     let inc = 0, exp = 0, catStats = {};
     data.forEach(t => {
-        if(t.type === 'income') inc += t.amount; else exp += t.amount;
+        const val = t.amount || 0; // Anti NaN
+        if(t.type === 'income') inc += val; else exp += val;
+        
         const key = t.category;
         if(!catStats[key]) catStats[key] = { type: t.type, val: 0 };
-        catStats[key].val += t.amount;
+        catStats[key].val += val;
     });
 
     document.getElementById('stat-income').innerText = formatRp(inc);
@@ -147,16 +159,20 @@ function renderDashboard() {
 }
 
 // ==========================================
-// 7. UI RENDERERS
+// 7. UI RENDERERS (ANTI NaN)
 // ==========================================
 function renderHighlights(catStats) {
     let maxInc = { c:'-', v:0 }, maxExp = { c:'-', v:0 };
+    
     Object.entries(catStats).forEach(([k, i]) => {
-        if(i.type === 'income' && i.val > maxInc.v) maxInc = {c:k, v:i.val};
-        if(i.type === 'expense' && i.val > maxExp.v) maxExp = {c:k, v:i.val};
+        // Safety Check nilai v
+        const val = i.val || 0;
+        if(i.type === 'income' && val > maxInc.v) maxInc = {c:k, v:val};
+        if(i.type === 'expense' && val > maxExp.v) maxExp = {c:k, v:val};
     });
+
     document.getElementById('top-income-cat').innerText = maxInc.c;
-    document.getElementById('top-income-val').innerText = formatRp(maxInc.val);
+    document.getElementById('top-income-val').innerText = formatRp(maxInc.v); // Aman karena formatRp sudah diperbaiki
     document.getElementById('top-expense-cat').innerText = maxExp.c;
     document.getElementById('top-expense-val').innerText = formatRp(maxExp.v);
 }
@@ -173,13 +189,14 @@ function renderTable(data) {
 
     data.forEach(t => {
         const dStr = new Date(t.date).toLocaleDateString('id-ID', {day:'numeric', month:'short'});
+        const val = t.amount || 0;
         tbody.innerHTML += `
             <tr>
                 <td>${dStr}</td>
                 <td><strong>${t.title}</strong> ${t.isAuto ? '<span style="font-size:9px;color:blue">(Auto)</span>' : ''}</td>
                 <td><span class="badge ${t.type==='income'?'inc':'exp'}">${t.category}</span></td>
                 <td class="text-right" style="color:${t.type==='income'?'#10b981':'#ef4444'}">
-                    ${t.type==='income'?'+':'-'} ${formatRp(t.amount)}
+                    ${t.type==='income'?'+':'-'} ${formatRp(val)}
                 </td>
                 <td class="text-right">
                     ${!t.isAuto ? `<button class="btn-del" onclick="deleteManual('${t.id}')">✕</button>` : ''}
@@ -193,7 +210,7 @@ function renderChart(catStats) {
     if(!ctx) return;
     
     let arr = [];
-    Object.entries(catStats).forEach(([k,v]) => arr.push({l:k, v:v.val, c:v.type==='income'?'#10b981':'#ef4444'}));
+    Object.entries(catStats).forEach(([k,v]) => arr.push({l:k, v:(v.val||0), c:v.type==='income'?'#10b981':'#ef4444'}));
     arr.sort((a,b) => b.v - a.v).slice(0,5);
     
     if(myChart) myChart.destroy();
@@ -212,7 +229,7 @@ function renderChart(catStats) {
 }
 
 // ==========================================
-// 8. SISTEM BUKU HUTANG (FULL SYNC)
+// 8. SISTEM BUKU HUTANG (FIXED)
 // ==========================================
 function openDebtModal() {
     document.getElementById('debtModal').style.display = 'flex';
@@ -235,7 +252,6 @@ function saveNewDebt() {
 
     if(!name || !amount) return alert("Isi nama dan nominal!");
 
-    // 1. Simpan ke Buku Hutang Database
     debtDB.push({
         id: 'd-' + Date.now(),
         name,
@@ -247,7 +263,7 @@ function saveNewDebt() {
     });
     localStorage.setItem('taufik_debt_db', JSON.stringify(debtDB));
 
-    // 2. AUTO-SYNC: Catat ke Riwayat Transaksi sebagai 'Beban'
+    // AUTO SYNC
     const today = new Date().toISOString().split('T')[0];
     const transTitle = currentDebtTab === 'payable' ? `Hutang Baru: ${name}` : `Pinjamkan ke: ${name}`;
     const transCat = currentDebtTab === 'payable' ? `Beban Hutang` : `Piutang Keluar`;
@@ -309,7 +325,7 @@ function payDebt(id) {
     }
     localStorage.setItem('taufik_debt_db', JSON.stringify(debtDB));
     
-    // 2. AUTO-SYNC: Catat ke Riwayat Transaksi sebagai 'Recovery'
+    // AUTO SYNC RECOVERY
     const today = new Date().toISOString().split('T')[0];
     const transTitle = debt.type === 'payable' ? `Bayar Hutang: ${debt.name}` : `Diterima dari: ${debt.name}`;
     const transCat = debt.type === 'payable' ? `Pelunasan Hutang` : `Pelunasan Piutang`;
@@ -339,7 +355,7 @@ function deleteDebt(id) {
 }
 
 // ==========================================
-// 9. MODAL & UTILS
+// 9. MODAL & UTILS (FORMATTER YANG DIPERBAIKI)
 // ==========================================
 function openModal(type) {
     const modal = document.getElementById('financeModal');
@@ -397,7 +413,11 @@ function deleteManual(id) {
     }
 }
 
-function formatRp(n) { return new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(n); }
+// === FIX: FUNGSI FORMAT RP YANG LEBIH KUAT ===
+function formatRp(n) {
+    if (isNaN(n) || n === null || n === undefined) return "Rp 0"; // Safety Net
+    return new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(n);
+}
 
 function backupData() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ finance: manualTrans, debt: debtDB }));

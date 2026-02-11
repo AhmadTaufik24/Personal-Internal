@@ -1,153 +1,226 @@
 :root {
-    /* --- PALET PERSONAL BRANDING --- */
-    --brand-primary: #456d91;   /* Sidebar Background (Biru) */
-    --brand-light: #7a9ebf;     /* Biru Muda */
-    --brand-pale: #bbd5e8;      /* Biru Pucat */
-    --brand-grey: #897e7a;      /* Abu Kecoklatan */
-    --brand-red: #f96b6b;       /* Merah Salmon */
-    --brand-orange: #f9af6b;    /* Oranye (Button Aksi) */
-    --brand-bg: #dfdfdf;        /* Background Body (Abu Terang) */
+    /* --- PERSONAL BRANDING PALETTE --- */
+    --brand-primary: #456d91;   /* Sidebar & Header */
+    --brand-bg: #dfdfdf;        /* Background Body Abu-abu */
+    --brand-orange: #f9af6b;    /* Tombol Aksi */
+    --brand-light: #7a9ebf;     /* Aksen Biru Muda */
     
-    --white: #ffffff;
+    --bg-white: #ffffff;
     --text-dark: #2c3e50;
-    --radius: 12px;
+    --text-grey: #897e7a;
+    --text-light: #ffffff;
+    
+    --sidebar-width: 280px;
+    --card-shadow: 0px 10px 30px rgba(0, 0, 0, 0.05);
+    --radius-card: 16px;
+    
+    /* Tag Colors (Branding) */
+    --tag-blue: #7a9ebf;
+    --tag-red: #f96b6b;
+    --tag-pale: #bbd5e8;
 }
 
-* { margin:0; padding:0; box-sizing:border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
 
-body { 
-    background-color: var(--brand-bg); 
-    color: var(--text-dark); 
-    height: 100vh; 
-    overflow: hidden; 
+body {
+    background-color: var(--brand-bg); /* Background Abu #dfdfdf */
+    color: var(--text-dark);
+    height: 100vh;
+    overflow: hidden;
 }
 
 .app-layout { display: flex; height: 100%; }
 
-/* === SIDEBAR (BRANDED #456d91) === */
-.sidebar { 
-    width: 280px; 
-    background: var(--brand-primary); 
-    color: var(--white);
-    padding: 30px 20px; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center;
-    text-align: center;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+/* === 1. SIDEBAR (BRANDING #456d91) === */
+.sidebar {
+    width: var(--sidebar-width);
+    background: var(--brand-primary); /* BIRU TUA */
+    color: var(--text-light);
+    display: flex; flex-direction: column;
+    padding: 30px 25px;
+    box-shadow: 4px 0 20px rgba(0,0,0,0.05);
 }
 
-.profile-section { margin-bottom: 40px; }
-.avatar-circle {
-    width: 80px; height: 80px;
-    background: var(--white);
-    color: var(--brand-primary);
-    border-radius: 50%;
+.brand-wrapper {
+    display: flex; align-items: center; gap: 15px;
+    margin-bottom: 40px;
+}
+.logo-box {
+    width: 45px; height: 45px;
+    background: var(--bg-white);
+    color: var(--brand-primary); 
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 32px; font-weight: 800;
-    margin: 0 auto 15px;
-    border: 4px solid var(--brand-light);
+    font-weight: 800; font-size: 24px; flex-shrink: 0;
 }
-.profile-info h3 { font-size: 20px; font-weight: 700; margin-bottom: 5px; }
-.profile-info p { font-size: 12px; opacity: 0.8; font-family: monospace; }
-
-.nav-menu { width: 100%; }
-.menu-label { font-size: 10px; font-weight: 700; color: var(--brand-pale); margin-bottom: 15px; letter-spacing: 1px; text-align: left; padding-left: 10px; }
-
-.nav-btn { 
-    display: flex; align-items: center; gap: 12px; padding: 12px 15px; 
-    border-radius: 10px; color: var(--brand-pale); text-decoration: none; 
-    font-weight: 600; margin-bottom: 8px; transition: 0.2s; 
+.brand-text h3 {
+    font-size: 20px; font-weight: 700; color: var(--text-light); margin: 0; line-height: 1;
 }
-.nav-btn:hover, .nav-btn.active { 
-    background: rgba(255,255,255,0.15); 
-    color: var(--white); 
+.brand-text .text-orange { color: var(--brand-orange); }
+.brand-text p { 
+    font-size: 11px;            /* Ukuran kecil seperti di Finance */
+    color: rgba(255,255,255,0.7); 
+    margin-top: 2px; 
+    font-family: 'Poppins', sans-serif; /* Ganti dari monospace ke Poppins */
+    font-weight: 400;           /* Tidak terlalu tebal */
+    letter-spacing: 0.3px;      /* Jarak antar huruf agar lebih elegan */
+    opacity: 0.8;
+}
+.separator { height: 1px; background: rgba(255,255,255,0.1); margin-bottom: 25px; }
+
+.menu-label {
+    font-size: 11px; color: rgba(255,255,255,0.5); font-weight: 700;
+    margin-bottom: 15px; padding-left: 10px; letter-spacing: 1px;
+}
+
+.nav-item {
+    display: flex; align-items: center; gap: 15px;
+    padding: 14px 15px; margin-bottom: 8px;
+    color: rgba(255,255,255,0.7); text-decoration: none;
+    font-weight: 500; border-radius: 12px;
+    transition: 0.2s;
+}
+
+.nav-item.active {
+    background: rgba(255,255,255,0.15); /* Transparan Putih */
+    color: var(--text-light);
     font-weight: 700;
 }
-.nav-btn i { font-size: 20px; }
+.nav-item:hover { background: rgba(255,255,255,0.1); color: var(--text-light); }
+.nav-item i { font-size: 22px; }
 
-.sidebar-footer { margin-top: auto; font-size: 10px; opacity: 0.6; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); width: 100%; }
+.sidebar-footer { margin-top: auto; font-size: 11px; opacity: 0.5; text-align: center; }
 
-/* === CONTENT AREA === */
-.content-area { flex: 1; padding: 30px 40px; overflow-y: auto; display: flex; flex-direction: column; }
-
-.top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-.header-left h1 { font-size: 28px; font-weight: 800; color: var(--brand-primary); }
-.header-left p { color: var(--brand-grey); font-size: 14px; font-weight: 500; }
-
-/* Search & Button */
-.header-right { display: flex; gap: 15px; }
-.search-box { 
-    display: flex; align-items: center; 
-    background: var(--white); 
-    padding: 0 15px; border-radius: 50px; 
-    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+/* === 2. MAIN CONTENT === */
+.content-area {
+    flex: 1; padding: 35px 40px; overflow-y: auto;
 }
-.search-box i { color: var(--brand-primary); }
-.search-box input { border: none; padding: 12px; outline: none; width: 200px; color: var(--brand-primary); }
-.search-box input::placeholder { color: var(--brand-light); }
 
-.btn-add { 
-    background: var(--brand-orange); /* Oranye #f9af6b */
-    color: var(--white); border: none; padding: 12px 25px; border-radius: 50px; 
-    font-weight: 700; cursor: pointer; transition: 0.2s; 
-    box-shadow: 0 4px 15px rgba(249, 175, 107, 0.4);
+/* Header */
+.top-bar {
+    display: flex; justify-content: space-between; align-items: flex-end;
+    margin-bottom: 40px;
 }
-.btn-add:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(249, 175, 107, 0.6); }
+.breadcrumb { font-size: 13px; color: var(--text-grey); margin-bottom: 5px; font-weight: 600; }
+.page-title h1 { font-size: 32px; font-weight: 800; color: var(--brand-primary); line-height: 1; }
 
-/* === CATEGORY TABS === */
-.category-tabs { display: flex; gap: 10px; margin-bottom: 30px; }
-.cat-btn { 
-    background: transparent; border: 2px solid var(--brand-light); 
-    padding: 8px 20px; border-radius: 20px; cursor: pointer; 
-    color: var(--brand-primary); font-weight: 700; transition: 0.2s; 
+.top-controls {
+    display: flex; align-items: center; gap: 15px;
 }
-.cat-btn.active, .cat-btn:hover { background: var(--brand-primary); color: var(--white); border-color: var(--brand-primary); }
 
-/* === GRID CARDS === */
-.ideas-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+/* Search Bar (Putih Bersih) */
+.search-wrapper {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--bg-white);
+    padding: 12px 20px;
+    border-radius: 50px;
+    width: 250px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+.search-wrapper i { color: var(--brand-primary); opacity: 0.6; }
+.search-wrapper input {
+    border: none; background: transparent; outline: none;
+    font-size: 14px; width: 100%; color: var(--text-dark);
+}
 
-.idea-card { 
-    background: var(--white); padding: 25px; border-radius: 16px; 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.2s; 
-    border-top: 5px solid var(--brand-primary); /* Aksen atas */
+/* Tombol + Ide (Warna Orange Branding) */
+.btn-new-idea {
+    background: var(--brand-orange);
+    color: white; border: none;
+    padding: 12px 25px; border-radius: 50px;
+    font-weight: 700; cursor: pointer;
+    display: flex; align-items: center; gap: 8px;
+    transition: 0.2s;
+    box-shadow: 0 5px 15px rgba(249, 175, 107, 0.4);
+}
+.btn-new-idea:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(249, 175, 107, 0.5); }
+
+.profile-avatar {
+    width: 45px; height: 45px;
+    background: var(--bg-white); color: var(--brand-primary);
+    border: 2px solid var(--brand-light);
+    border-radius: 50%; font-weight: 800; font-size: 18px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+/* === 3. FILTER & CARDS === */
+.filter-section { display: flex; gap: 12px; margin-bottom: 30px; }
+.cat-pill {
+    background: transparent; border: 2px solid var(--brand-light);
+    padding: 8px 22px; border-radius: 50px;
+    color: var(--brand-primary); font-weight: 700;
+    cursor: pointer; transition: 0.2s;
+}
+.cat-pill.active, .cat-pill:hover {
+    background: var(--brand-primary); color: white; border-color: var(--brand-primary);
+}
+
+.ideas-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+}
+
+.idea-card {
+    background: var(--bg-white);
+    border-radius: var(--radius-card);
+    padding: 25px;
+    box-shadow: var(--card-shadow);
     display: flex; flex-direction: column;
+    transition: 0.2s;
+    border-top: 5px solid var(--brand-primary); /* Aksen Branding */
 }
-.idea-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+.idea-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.08); }
 
 .card-top { display: flex; justify-content: space-between; margin-bottom: 15px; }
-.tag { font-size: 10px; font-weight: 700; padding: 4px 12px; border-radius: 4px; color: var(--white); }
+.tag { 
+    font-size: 10px; font-weight: 700; padding: 5px 12px; border-radius: 6px; text-transform: uppercase; color: white;
+}
+/* Tag Colors (Sesuai Gambar Profil) */
+.tag.Konten { background: var(--tag-blue); }
+.tag.Bisnis { background: var(--brand-primary); }
+.tag.Desain { background: var(--tag-red); }
+.tag.Life { background: var(--text-grey); }
 
-/* Warna Tag sesuai palet */
-.tag.Konten { background: var(--brand-light); } /* #7a9ebf */
-.tag.Bisnis { background: var(--brand-primary); } /* #456d91 */
-.tag.Desain { background: var(--brand-red); } /* #f96b6b */
-.tag.Life { background: var(--brand-grey); } /* #897e7a */
+.idea-date { font-size: 12px; color: var(--text-grey); }
 
-.idea-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 10px; color: var(--brand-primary); }
-.idea-card p { font-size: 14px; color: var(--brand-grey); line-height: 1.6; flex: 1; }
+.idea-card h3 { font-size: 18px; margin-bottom: 10px; color: var(--brand-primary); font-weight: 700; }
+.idea-card p { font-size: 14px; color: var(--text-grey); line-height: 1.6; margin-bottom: 20px; flex: 1; }
 
-.card-actions { margin-top: 20px; display: flex; justify-content: flex-end; gap: 10px; }
-.btn-icon { background: var(--brand-pale); width: 30px; height: 30px; border-radius: 50%; border:none; color: var(--brand-primary); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-.btn-icon:hover { background: var(--brand-primary); color: var(--white); }
+.card-actions { 
+    display: flex; justify-content: flex-end; gap: 10px; 
+    border-top: 1px solid rgba(0,0,0,0.05); padding-top: 15px;
+}
+.btn-icon {
+    width: 32px; height: 32px; border-radius: 50%; border: none;
+    background: #f1f5f9; color: var(--brand-primary); cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: 0.2s;
+}
+.btn-icon:hover { background: var(--brand-primary); color: white; }
 
-/* === MODAL === */
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(69, 109, 145, 0.6); display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); z-index: 999; }
-.modal-card { background: var(--white); width: 500px; padding: 30px; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
-.modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center; }
-.modal-header h3 { color: var(--brand-primary); font-size: 20px; font-weight: 800; }
-.btn-close { font-size: 20px; cursor: pointer; color: var(--brand-grey); border: none; background: none; }
+/* === 4. MODAL === */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(69, 109, 145, 0.6); backdrop-filter: blur(4px);
+    display: none; align-items: center; justify-content: center; z-index: 1000;
+}
+.modal-card {
+    background: white; width: 480px; padding: 35px; border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+.modal-header { display: flex; justify-content: space-between; margin-bottom: 25px; }
+.modal-header h3 { font-size: 22px; color: var(--brand-primary); font-weight: 700; }
+.btn-close { background: none; border: none; font-size: 20px; cursor: pointer; opacity: 0.5; }
 
-.btn-save { background: var(--brand-orange); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+.input-group { margin-bottom: 20px; }
+.input-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--brand-primary); }
+.input-group input, .input-group textarea, .input-group select {
+    width: 100%; padding: 12px; border: 2px solid var(--brand-light); 
+    border-radius: 10px; outline: none; font-family: inherit;
+}
+.input-group input:focus, .input-group textarea:focus { border-color: var(--brand-primary); }
+
+.btn-save {
+    width: 100%; padding: 14px; background: var(--brand-orange); color: white;
+    border: none; border-radius: 10px; font-weight: 700; cursor: pointer;
+}
 .btn-save:hover { background: #e0944b; }
-
-.form-group { margin-bottom: 15px; }
-.form-group label { display: block; font-size: 12px; font-weight: 700; margin-bottom: 8px; color: var(--brand-primary); }
-.form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 2px solid var(--brand-pale); border-radius: 10px; outline: none; font-family: inherit; color: var(--brand-primary); }
-.form-group input:focus, .form-group textarea:focus { border-color: var(--brand-primary); }
-
-/* Scrollbar */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--brand-bg); }
-::-webkit-scrollbar-thumb { background: var(--brand-light); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--brand-primary); }

@@ -1,9 +1,9 @@
 // ==========================================
-// TAUFIK FINANCE - STABLE ENGINE (ANTI-NaN)
+// TAUFIK FINANCE - ENGINE (LOCAL DATE FIX)
 // ==========================================
 
 // --- 1. KONFIGURASI ---
-const APP_PASSWORD = "AT240101"; 
+const APP_PASSWORD = "1234"; 
 const RATES = { story: 50000, feed: 50000, reels: 150000 };
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 
@@ -24,10 +24,21 @@ let currentDebtTab = 'payable';
 
 // --- INIT ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Set Input Tanggal ke Hari Ini (WIB)
     const dateInput = document.getElementById('inputDate');
-    if(dateInput) dateInput.valueAsDate = new Date();
+    if(dateInput) dateInput.value = getLocalTodayDate();
     console.log("System Locked.");
 });
+
+// --- HELPER: GET LOCAL DATE (WIB) ---
+function getLocalTodayDate() {
+    const d = new Date();
+    // Mengambil tahun, bulan, tanggal lokal komputer user
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
 
 // ==========================================
 // 4. SECURITY SYSTEM (LOGIN)
@@ -86,25 +97,19 @@ function setFilter(type) {
 }
 
 // ==========================================
-// 6. CORE CALCULATION (FIXED)
+// 6. CORE CALCULATION
 // ==========================================
 function getAllTransactions() {
     let allData = [];
-    
-    // Data Job Board
     jobOrders.forEach(jo => {
         if (jo.stage === 'done') {
             let price = (jo.type === 'Adjust' || jo.category === 'General') ? (jo.manualPrice || 0) : 
                         (jo.type === 'Story' ? RATES.story : jo.type === 'Reels' ? RATES.reels : RATES.feed * (jo.slides || 1));
-            
-            // SAFETY CHECK: Pastikan price adalah angka
+            // Safety Check
             if (isNaN(price) || price === null) price = 0;
-            
             allData.push({ id: jo.id, title: jo.title, amount: price, type: 'income', category: 'Freelance', date: jo.archivedDate, isAuto: true });
         }
     });
-
-    // Data Manual
     allData = [...allData, ...manualTrans];
     return allData.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
@@ -129,18 +134,16 @@ function renderDashboard() {
     const data = getFilteredData();
     const allData = getAllTransactions();
 
-    // 1. Hitung Saldo Real
+    // LOGIKA SALDO (Total Inc - Total Exp)
     const realBalance = allData.reduce((acc, cur) => {
-        const val = cur.amount || 0; // Anti NaN
+        const val = cur.amount || 0;
         return cur.type === 'income' ? acc + val : acc - val;
     }, 0);
-
     document.getElementById('wallet-balance').innerText = formatRp(realBalance);
 
-    // 2. Hitung Statistik
     let inc = 0, exp = 0, catStats = {};
     data.forEach(t => {
-        const val = t.amount || 0; // Anti NaN
+        const val = t.amount || 0;
         if(t.type === 'income') inc += val; else exp += val;
         
         const key = t.category;
@@ -159,20 +162,17 @@ function renderDashboard() {
 }
 
 // ==========================================
-// 7. UI RENDERERS (ANTI NaN)
+// 7. UI RENDERERS
 // ==========================================
 function renderHighlights(catStats) {
     let maxInc = { c:'-', v:0 }, maxExp = { c:'-', v:0 };
-    
     Object.entries(catStats).forEach(([k, i]) => {
-        // Safety Check nilai v
         const val = i.val || 0;
         if(i.type === 'income' && val > maxInc.v) maxInc = {c:k, v:val};
         if(i.type === 'expense' && val > maxExp.v) maxExp = {c:k, v:val};
     });
-
     document.getElementById('top-income-cat').innerText = maxInc.c;
-    document.getElementById('top-income-val').innerText = formatRp(maxInc.v); // Aman karena formatRp sudah diperbaiki
+    document.getElementById('top-income-val').innerText = formatRp(maxInc.v);
     document.getElementById('top-expense-cat').innerText = maxExp.c;
     document.getElementById('top-expense-val').innerText = formatRp(maxExp.v);
 }
@@ -229,7 +229,7 @@ function renderChart(catStats) {
 }
 
 // ==========================================
-// 8. SISTEM BUKU HUTANG (FIXED)
+// 8. SISTEM BUKU HUTANG (FIXED DATE)
 // ==========================================
 function openDebtModal() {
     document.getElementById('debtModal').style.display = 'flex';
@@ -252,6 +252,7 @@ function saveNewDebt() {
 
     if(!name || !amount) return alert("Isi nama dan nominal!");
 
+    // Simpan ke DB
     debtDB.push({
         id: 'd-' + Date.now(),
         name,
@@ -263,8 +264,8 @@ function saveNewDebt() {
     });
     localStorage.setItem('taufik_debt_db', JSON.stringify(debtDB));
 
-    // AUTO SYNC
-    const today = new Date().toISOString().split('T')[0];
+    // AUTO SYNC (Pake Tanggal Lokal)
+    const today = getLocalTodayDate(); // <--- FIX HERE
     const transTitle = currentDebtTab === 'payable' ? `Hutang Baru: ${name}` : `Pinjamkan ke: ${name}`;
     const transCat = currentDebtTab === 'payable' ? `Beban Hutang` : `Piutang Keluar`;
     
@@ -325,8 +326,8 @@ function payDebt(id) {
     }
     localStorage.setItem('taufik_debt_db', JSON.stringify(debtDB));
     
-    // AUTO SYNC RECOVERY
-    const today = new Date().toISOString().split('T')[0];
+    // AUTO SYNC RECOVERY (Pake Tanggal Lokal)
+    const today = getLocalTodayDate(); // <--- FIX HERE
     const transTitle = debt.type === 'payable' ? `Bayar Hutang: ${debt.name}` : `Diterima dari: ${debt.name}`;
     const transCat = debt.type === 'payable' ? `Pelunasan Hutang` : `Pelunasan Piutang`;
 
@@ -355,7 +356,7 @@ function deleteDebt(id) {
 }
 
 // ==========================================
-// 9. MODAL & UTILS (FORMATTER YANG DIPERBAIKI)
+// 9. MODAL & UTILS
 // ==========================================
 function openModal(type) {
     const modal = document.getElementById('financeModal');
@@ -365,25 +366,16 @@ function openModal(type) {
     document.getElementById('transType').value = type;
     document.getElementById('modalTitle').innerText = type === 'income' ? 'Catat Pemasukan' : 'Catat Pengeluaran';
     
-    catSelect.innerHTML = '';
+    // Set Input Tanggal ke Hari Ini (WIB)
+    document.getElementById('inputDate').value = getLocalTodayDate();
     
-    // KATEGORI LENGKAP
+    catSelect.innerHTML = '';
     let cats = [];
     if(type==='income') {
-        cats = [
-            'Gaji Utama', 'Freelance Project', 'Bonus / THR', 
-            'Pasif Income', 'Investasi (Cair)', 'Hadiah', 
-            'Refund', 'Lainnya'
-        ];
+        cats = ['Gaji Utama', 'Freelance Project', 'Bonus / THR', 'Pasif Income', 'Investasi (Cair)', 'Hadiah', 'Refund', 'Lainnya'];
     } else {
-        cats = [
-            'Makan & Minum', 'Transport (Bensin/Ojol)', 'Belanja Bulanan', 
-            'Kuota & Internet', 'Tagihan (Listrik/Air)', 'Sewa Studio', 
-            'Software & Tools', 'Hiburan', 'Kesehatan', 
-            'Sedekah', 'Keluarga', 'Lainnya'
-        ];
+        cats = ['Makan & Minum', 'Transport (Bensin/Ojol)', 'Belanja Bulanan', 'Kuota & Internet', 'Tagihan (Listrik/Air)', 'Sewa Studio', 'Software & Tools', 'Hiburan', 'Kesehatan', 'Sedekah', 'Keluarga', 'Lainnya'];
     }
-    
     cats.forEach(c => catSelect.add(new Option(c, c)));
     modal.style.display = 'flex';
 }
@@ -395,7 +387,9 @@ function saveTransaction() {
     const title = document.getElementById('inputTitle').value;
     const category = document.getElementById('inputCategory').value;
     const type = document.getElementById('transType').value;
-    const date = document.getElementById('inputDate').value || new Date().toISOString().split('T')[0];
+    
+    // Gunakan tanggal input, kalau kosong pakai hari ini (WIB)
+    const date = document.getElementById('inputDate').value || getLocalTodayDate();
 
     if(!amount || !title) return alert("Lengkapi data!");
 
@@ -413,9 +407,8 @@ function deleteManual(id) {
     }
 }
 
-// === FIX: FUNGSI FORMAT RP YANG LEBIH KUAT ===
 function formatRp(n) {
-    if (isNaN(n) || n === null || n === undefined) return "Rp 0"; // Safety Net
+    if (isNaN(n) || n === null || n === undefined) return "Rp 0"; 
     return new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(n);
 }
 
@@ -423,7 +416,7 @@ function backupData() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify({ finance: manualTrans, debt: debtDB }));
     const a = document.createElement('a');
     a.href = dataStr;
-    a.download = "Backup_Taufik_" + new Date().toISOString().split('T')[0] + ".json";
+    a.download = "Backup_Taufik_" + getLocalTodayDate() + ".json";
     document.body.appendChild(a); a.click(); a.remove();
 }
 
@@ -451,10 +444,8 @@ function exportCSV() {
     link.download = `Laporan_Keuangan.csv`; link.click();
 }
 
-// Tutup Modal saat klik luar
 window.onclick = function(e) { 
     if(e.target == document.getElementById('financeModal')) closeModal();
     if(e.target == document.getElementById('debtModal')) closeDebtModal();
     if(e.target == document.getElementById('addDebtForm')) closeAddDebtForm();
 }
-

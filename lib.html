@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Library | Taufik</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="assets/lib.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="brand-wrapper">
+                <div class="logo-box">T</div>
+                <div class="brand-text">
+                    <h3>Taufik <span class="text-orange">Library</span></h3>
+                    <p>Creative assets vault</p>
+                </div>
+            </div>
+
+            <div class="separator"></div>
+            
+            <nav class="nav-menu">
+                <p class="menu-label">DIRECTORY</p>
+                <a href="#" class="nav-item active">
+                    <i class="ph ph-folder-star"></i>
+                    <span>Asset Library</span>
+                </a>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <header class="top-bar">
+                <div class="page-title">
+                    <p class="breadcrumb">Workspace / Library</p>
+                    <h1>Asset Library</h1>
+                </div>
+
+                <div class="top-controls">
+                    <div class="search-wrapper">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Cari aset..." onkeyup="renderAssets()">
+                    </div>
+                    <button class="btn-new-asset" onclick="openModal()">
+                        <i class="ph ph-plus"></i> Tambah Aset
+                    </button>
+                </div>
+            </header>
+
+            <div class="filter-section">
+                <button class="cat-pill active" onclick="filterCategory('all', this)">Semua</button>
+                <button class="cat-pill" onclick="filterCategory('Preset', this)">Preset</button>
+                <button class="cat-pill" onclick="filterCategory('Font', this)">Font</button>
+                <button class="cat-pill" onclick="filterCategory('Branding', this)">Branding</button>
+                <button class="cat-pill" onclick="filterCategory('Tools', this)">Tools</button>
+            </div>
+
+            <div class="assets-grid" id="assetGrid">
+                </div>
+        </main>
+    </div>
+
+    <div id="assetModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Tambah Aset Baru</h3>
+                <button class="btn-close" onclick="closeModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Nama Aset</label>
+                    <input type="text" id="assetName" placeholder="Contoh: Street Photography Preset">
+                </div>
+                <div class="input-group">
+                    <label>Link Aset (Drive/URL)</label>
+                    <input type="text" id="assetLink" placeholder="https://drive.google.com/...">
+                </div>
+                <div class="input-group">
+                    <label>Kategori</label>
+                    <select id="assetCategory">
+                        <option value="Preset">Preset</option>
+                        <option value="Font">Font</option>
+                        <option value="Branding">Branding</option>
+                        <option value="Tools">Tools</option>
+                    </select>
+                </div>
+                <button class="btn-save" onclick="saveAsset()">Simpan ke Library</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/lib.js"></script>
+</body>
+</html>

@@ -19,11 +19,44 @@
 body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overflow: hidden; }
 
 /* =========================================
-   2. LAYOUT & SIDEBAR
+   2. LOGIN SCREEN (NEW!)
+   ========================================= */
+#login-screen {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: #f1f5f9;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 99999; /* Paling Depan */
+}
+.login-card {
+    background: white; padding: 40px; border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.05); text-align: center; width: 350px;
+    border: 1px solid var(--border);
+}
+.login-logo {
+    width: 60px; height: 60px; background: var(--primary); color: white;
+    font-size: 24px; font-weight: 800; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+}
+.login-card h2 { margin-bottom: 5px; color: var(--primary); }
+.login-card p { color: var(--text-grey); font-size: 13px; margin-bottom: 25px; }
+.login-input-group { display: flex; flex-direction: column; gap: 10px; }
+.login-input-group input {
+    padding: 12px; border: 2px solid var(--border); border-radius: 10px;
+    font-size: 16px; text-align: center; outline: none; transition: 0.3s;
+}
+.login-input-group input:focus { border-color: var(--accent); }
+.login-input-group button {
+    padding: 12px; background: var(--primary); color: white; border: none;
+    border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 14px;
+    transition: 0.3s;
+}
+.login-input-group button:hover { background: #1e293b; transform: translateY(-2px); }
+
+/* =========================================
+   3. LAYOUT & SIDEBAR
    ========================================= */
 .app-layout { display: flex; height: 100%; position: relative; z-index: 1; }
 
-/* Sidebar Styling */
 .sidebar { 
     width: 260px; background: var(--bg-card); border-right: 1px solid var(--border); 
     display: flex; flex-direction: column; padding: 24px; flex-shrink: 0;
@@ -46,7 +79,10 @@ body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overf
 }
 .nav-btn:hover, .nav-btn.active { background: #eff6ff; color: var(--accent); }
 
-/* Sidebar Footer (Backup & Wallet) */
+/* TOMBOL SPECIAL HUTANG */
+.nav-btn.special-debt { background: #fff1f2; color: #e11d48; border: none; cursor: pointer; width: 100%; text-align: left; font-size: 14px; }
+.nav-btn.special-debt:hover { background: #ffe4e6; }
+
 .sidebar-footer { margin-top: auto; }
 .data-tools { margin-bottom: 20px; border-top: 1px solid var(--border); padding-top: 15px; }
 .btn-tool { 
@@ -63,16 +99,15 @@ body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overf
 .wallet-card h2 { font-size: 18px; margin-top: 5px; }
 
 /* =========================================
-   3. MAIN CONTENT AREA
+   4. MAIN CONTENT
    ========================================= */
 .content-area { flex: 1; padding: 25px 35px; overflow-y: auto; display: flex; flex-direction: column; }
 
-/* Header */
 .top-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
 .header-left h1 { font-size: 22px; font-weight: 800; color: var(--primary); }
 .header-left p { font-size: 13px; color: var(--text-grey); }
 
-/* Period Navigator (Time Travel) */
+/* Period Navigator */
 .period-navigator { 
     display: flex; align-items: center; gap: 15px; background: white; 
     padding: 5px 10px; border-radius: 12px; border: 1px solid var(--border); 
@@ -88,22 +123,19 @@ body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overf
 }
 .nav-arrow:hover { background: var(--accent); color: white; }
 
-/* Header Buttons */
 .header-tools { display: flex; gap: 10px; }
 .btn-action { border: none; padding: 10px 20px; border-radius: 10px; font-weight: 700; cursor: pointer; transition: 0.2s; font-size: 13px; }
 .btn-action.income { background: #d1fae5; color: #065f46; }
 .btn-action.expense { background: #fee2e2; color: #991b1b; }
 .btn-action:hover { transform: translateY(-2px); }
 
-/* Tabs Filter */
+/* Tabs */
 .time-tabs { display: flex; gap: 5px; background: #e2e8f0; padding: 4px; border-radius: 10px; width: fit-content; margin-bottom: 20px; }
 .tab-btn { border: none; background: none; padding: 6px 14px; border-radius: 7px; font-weight: 600; color: var(--text-grey); cursor: pointer; font-size: 12px; }
 .tab-btn:hover { color: var(--text-dark); }
 .tab-btn.active { background: white; color: var(--primary); box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-/* =========================================
-   4. STATS & GRIDS
-   ========================================= */
+/* Stats Grid */
 .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
 .stat-card { 
     background: white; padding: 15px; border-radius: var(--radius); 
@@ -121,11 +153,10 @@ body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overf
 .text-green { color: var(--green); }
 .text-red { color: var(--red); }
 
-/* Layout Grid for Details */
+/* Details Grid */
 .details-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px; flex: 1; min-height: 0; }
 .left-col { display: flex; flex-direction: column; gap: 20px; }
 
-/* Highlights (Top Income/Expense) */
 .analysis-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 .highlight-card { background: white; padding: 15px; border-radius: var(--radius); border: 1px solid var(--border); }
 .highlight-card h4 { font-size: 11px; color: var(--text-grey); margin-bottom: 8px; }
@@ -133,15 +164,13 @@ body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overf
 .highlight-content span { font-size: 13px; font-weight: 600; margin-bottom: 2px; }
 .highlight-content strong { font-size: 16px; }
 
-/* Chart Section */
 .chart-section { 
     background: white; border-radius: var(--radius); padding: 20px; 
     border: 1px solid var(--border); flex: 1; display: flex; flex-direction: column; 
-    min-height: 300px; /* Agar grafik punya ruang */
+    min-height: 300px;
 }
 .chart-wrapper { flex: 1; position: relative; width: 100%; }
 
-/* Transaction Table */
 .trans-section { 
     background: white; border-radius: var(--radius); padding: 20px; 
     border: 1px solid var(--border); display: flex; flex-direction: column; 
@@ -163,16 +192,16 @@ body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overf
 .btn-del:hover { color: var(--red); }
 
 /* =========================================
-   5. MODAL (FIXED)
+   5. MODAL SYSTEM
    ========================================= */
 .modal-overlay { 
     position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
     background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); 
-    display: none; /* Default Hidden */
-    align-items: center; justify-content: center; 
-    z-index: 9999; /* Paling Depan */
+    display: none; align-items: center; justify-content: center; 
+    z-index: 9999; 
 }
 .modal-card { background: white; width: 400px; padding: 25px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.1); }
+.modal-card.wide { width: 600px; max-width: 90%; }
 .modal-header { display: flex; justify-content: space-between; margin-bottom: 20px; }
 .input-big { width: 100%; font-size: 20px; font-weight: 700; padding: 10px; border: 2px solid var(--border); border-radius: 10px; outline: none; }
 .form-group { margin-bottom: 15px; }
@@ -182,3 +211,29 @@ body { background: var(--bg-body); color: var(--text-dark); height: 100vh; overf
 .col { flex: 1; }
 .btn-save { width: 100%; padding: 10px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; cursor: pointer; }
 .btn-close { background:none; border:none; font-size:18px; cursor:pointer; }
+
+/* DEBT CARD STYLING */
+.debt-tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+.debt-tab { flex: 1; padding: 10px; border: none; background: #f8fafc; border-radius: 8px; cursor: pointer; font-weight: 600; color: var(--text-grey); transition: 0.2s; }
+.debt-tab.active { background: var(--primary); color: white; }
+.debt-list { max-height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+
+.debt-card { border: 1px solid var(--border); border-radius: 12px; padding: 15px; position: relative; }
+.debt-header { display: flex; justify-content: space-between; margin-bottom: 10px; }
+.debt-header h4 { font-size: 16px; font-weight: 700; }
+.debt-header small { color: var(--text-grey); font-size: 11px; }
+.progress-container { background: #f1f5f9; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px; }
+.progress-bar { height: 100%; width: 0%; transition: 0.5s; }
+.debt-stats { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 15px; }
+.debt-actions { display: flex; gap: 10px; }
+.btn-pay { flex: 1; padding: 8px; border-radius: 6px; border: none; font-weight: 700; cursor: pointer; font-size: 12px; }
+
+/* Warna Spesifik Hutang vs Piutang */
+.type-payable .progress-bar { background: var(--red); }
+.type-payable .btn-pay { background: #fee2e2; color: #991b1b; }
+.type-receivable .progress-bar { background: var(--green); }
+.type-receivable .btn-pay { background: #d1fae5; color: #065f46; }
+
+.modal-footer.top-border { border-top: 1px solid var(--border); padding-top: 15px; margin-top: 15px; }
+.btn-add-debt { width: 100%; border: 2px dashed var(--border); background: none; padding: 10px; border-radius: 8px; color: var(--text-grey); font-weight: 600; cursor: pointer; }
+.btn-add-debt:hover { border-color: var(--primary); color: var(--primary); }

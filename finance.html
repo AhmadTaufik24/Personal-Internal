@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taufik Finance | Master Control</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="stylesheet" href="assets/finance.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-icon">TF</div>
+                <div class="brand-text">
+                    <h3>Taufik<span>Finance</span></h3>
+                    <p>Financial Control</p>
+                </div>
+            </div>
+            
+            <nav class="nav-menu">
+                <p class="menu-label">MENU UTAMA</p>
+                <a href="index.html" class="nav-btn">
+                    <i class="ph ph-squares-four"></i> Job Board
+                </a>
+                <a href="notes.html" class="nav-btn">
+                    <i class="ph ph-notebook"></i> Notes
+                </a>
+                <a href="#" class="nav-btn active">
+                    <i class="ph ph-chart-pie-slice"></i> Finance
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="data-tools">
+                    <p class="menu-label">DATA CONTROL</p>
+                    <button class="btn-tool" onclick="backupData()">
+                        <i class="ph ph-download-simple"></i> Backup Data
+                    </button>
+                    <button class="btn-tool outline" onclick="document.getElementById('restoreFile').click()">
+                        <i class="ph ph-upload-simple"></i> Restore Data
+                    </button>
+                    <input type="file" id="restoreFile" accept=".json" style="display: none;" onchange="restoreData(this)">
+                </div>
+                
+                <div class="wallet-card">
+                    <small>Total Aset (Real)</small>
+                    <h2 id="wallet-balance">Rp 0</h2>
+                </div>
+            </div>
+        </aside>
+
+        <main class="content-area">
+            
+            <header class="top-header">
+                <div class="header-left">
+                    <h1>Financial Dashboard</h1>
+                    <p>Analisis & Kontrol Arus Kas.</p>
+                </div>
+
+                <div class="period-navigator">
+                    <button class="nav-arrow" onclick="changePeriod(-1)">
+                        <i class="ph ph-caret-left"></i>
+                    </button>
+                    <div class="period-display">
+                        <span id="period-label">Bulan Ini</span>
+                        <strong id="period-value">Loading...</strong>
+                    </div>
+                    <button class="nav-arrow" onclick="changePeriod(1)">
+                        <i class="ph ph-caret-right"></i>
+                    </button>
+                </div>
+
+                <div class="header-tools">
+                    <button class="btn-action income" onclick="openModal('income')">+ Masuk</button>
+                    <button class="btn-action expense" onclick="openModal('expense')">- Keluar</button>
+                </div>
+            </header>
+
+            <div class="time-tabs">
+                <button class="tab-btn" onclick="setFilter('day')" id="btn-day">Hari</button>
+                <button class="tab-btn" onclick="setFilter('week')" id="btn-week">Minggu</button>
+                <button class="tab-btn active" onclick="setFilter('month')" id="btn-month">Bulan</button>
+                <button class="tab-btn" onclick="setFilter('year')" id="btn-year">Tahun</button>
+                <button class="tab-btn" onclick="setFilter('all')" id="btn-all">Semua</button>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon-box green"><i class="ph ph-trend-up"></i></div>
+                    <div class="stat-info">
+                        <small>Pemasukan</small>
+                        <h3 id="stat-income" class="text-green">Rp 0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-box red"><i class="ph ph-trend-down"></i></div>
+                    <div class="stat-info">
+                        <small>Pengeluaran</small>
+                        <h3 id="stat-expense" class="text-red">Rp 0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-box blue"><i class="ph ph-wallet"></i></div>
+                    <div class="stat-info">
+                        <small>Selisih (Cashflow)</small>
+                        <h3 id="stat-cashflow">Rp 0</h3>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon-box purple"><i class="ph ph-chart-bar"></i></div>
+                    <div class="stat-info">
+                        <small>Saving Rate</small>
+                        <h3 id="stat-saving">0%</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="details-grid">
+                
+                <div class="left-col">
+                    <div class="analysis-grid">
+                        <div class="highlight-card">
+                            <h4>🏆 Pemasukan Top</h4>
+                            <div class="highlight-content">
+                                <span id="top-income-cat">-</span>
+                                <strong id="top-income-val" class="text-green">Rp 0</strong>
+                            </div>
+                        </div>
+                        <div class="highlight-card">
+                            <h4>⚠️ Pengeluaran Top</h4>
+                            <div class="highlight-content">
+                                <span id="top-expense-cat">-</span>
+                                <strong id="top-expense-val" class="text-red">Rp 0</strong>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-section">
+                        <div class="card-head">
+                            <h3>📊 Analisis Kategori</h3>
+                        </div>
+                        <div class="chart-wrapper">
+                            <canvas id="mainChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="trans-section">
+                    <div class="card-head">
+                        <h3>📜 Riwayat Transaksi</h3>
+                        <button class="btn-text" onclick="exportCSV()">Export CSV</button>
+                    </div>
+                    <div class="table-wrapper">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Tgl</th>
+                                    <th>Keterangan</th>
+                                    <th>Kategori</th>
+                                    <th class="text-right">Nominal</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <div id="financeModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 id="modalTitle">Tambah Transaksi</h3>
+                <button class="btn-close" onclick="closeModal()">✕</button>
+            </div>
+            
+            <div class="modal-body">
+                <input type="hidden" id="transType">
+                
+                <div class="form-group">
+                    <label>Nominal (Rp)</label>
+                    <input type="number" id="inputAmount" class="input-big" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label>Judul Transaksi</label>
+                    <input type="text" id="inputTitle" placeholder="Ketikan sesuatu...">
+                </div>
+
+                <div class="form-group row">
+                    <div class="col">
+                        <label>Kategori</label>
+                        <select id="inputCategory"></select>
+                    </div>
+                    <div class="col">
+                        <label>Tanggal</label>
+                        <input type="date" id="inputDate">
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-save" onclick="saveTransaction()">Simpan Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/finance.js"></script>
+</body>
+</html>

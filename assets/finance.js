@@ -3,7 +3,7 @@
 // ==========================================
 
 // --- 1. KONFIGURASI ---
-const APP_PASSWORD = "1234"; 
+const APP_PASSWORD = "AT240101"; 
 const RATES = { story: 50000, feed: 50000, reels: 150000 };
 const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 
@@ -449,3 +449,4 @@ window.onclick = function(e) {
     if(e.target == document.getElementById('debtModal')) closeDebtModal();
     if(e.target == document.getElementById('addDebtForm')) closeAddDebtForm();
 }
+

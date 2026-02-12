@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Client 360° | Taufik Ecosystem</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="assets/client.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="brand-wrapper">
+                <div class="logo-box">T</div>
+                <div class="brand-text">
+                    <h3>Taufik <span class="text-orange">Hub</span></h3>
+                    <p>Client Intelligence</p>
+                </div>
+            </div>
+            <div class="separator"></div>
+            <nav class="nav-menu">
+                <p class="menu-label">MANAGEMENT</p>
+                <a href="#" class="nav-item active">
+                    <i class="ph ph-users-four"></i>
+                    <span>Client Database</span>
+                </a>
+                <a href="index.html" class="nav-item">
+                    <i class="ph ph-squares-four"></i>
+                    <span>Job Board</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer"><p>Connected to JO_DB_V47</p></div>
+        </aside>
+
+        <main class="content-area">
+            <header class="top-bar">
+                <div class="page-title">
+                    <p class="breadcrumb">Workspace / CRM</p>
+                    <h1>Client Relationship</h1>
+                </div>
+                <div class="top-controls">
+                    <div class="search-wrapper">
+                        <i class="ph ph-magnifying-glass"></i>
+                        <input type="text" id="searchInput" placeholder="Cari nama klien..." onkeyup="renderClients()">
+                    </div>
+                    <button class="btn-new-client" onclick="openAddModal()">
+                        <i class="ph ph-user-plus"></i> Klien Baru
+                    </button>
+                    <div class="profile-avatar">T</div>
+                </div>
+            </header>
+
+            <div class="crm-stats-row">
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="ph ph-users"></i></div>
+                    <div class="stat-info">
+                        <p>Total Klien</p>
+                        <h3 id="totalClients">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card gold">
+                    <div class="stat-icon"><i class="ph ph-crown"></i></div>
+                    <div class="stat-info">
+                        <p>Klien VIP (>10jt)</p>
+                        <h3 id="totalVip">0</h3>
+                    </div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon"><i class="ph ph-money"></i></div>
+                    <div class="stat-info">
+                        <p>Total Revenue CRM</p>
+                        <h3 id="totalRevenue">Rp 0</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="clients-grid" id="clientGrid">
+                </div>
+        </main>
+    </div>
+
+    <div id="detailModal" class="modal-overlay">
+        <div class="modal-card wide">
+            <div class="modal-header">
+                <h3>Profil Klien 360°</h3>
+                <button class="btn-close" onclick="closeDetailModal()">✕</button>
+            </div>
+            <div class="modal-body-split">
+                
+                <div class="profile-panel">
+                    <div class="client-badge-large" id="detailInitial">A</div>
+                    <h2 id="detailName">Nama Klien</h2>
+                    <p id="detailCompany" class="text-mute">Perusahaan</p>
+                    
+                    <div class="tier-badge" id="detailTier">VIP MEMBER</div>
+
+                    <div class="contact-actions">
+                        <a href="#" id="btnWA" target="_blank" class="action-btn wa"><i class="ph ph-whatsapp-logo"></i> WhatsApp</a>
+                        <a href="#" id="btnEmail" class="action-btn email"><i class="ph ph-envelope"></i> Email</a>
+                    </div>
+
+                    <div class="info-list">
+                        <div class="info-item">
+                            <span>Total Spent</span>
+                            <strong id="detailSpent" class="text-green">Rp 0</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>Total Projects</span>
+                            <strong id="detailCount">0</strong>
+                        </div>
+                        <div class="info-item">
+                            <span>Terdaftar</span>
+                            <strong id="detailDate">-</strong>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-delete-client" onclick="deleteCurrentClient()">Hapus Data Klien</button>
+                </div>
+
+                <div class="history-panel">
+                    <h4>Riwayat Project (Dari Job Board)</h4>
+                    <div class="table-scroll">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>Nama Job</th>
+                                    <th>Kategori</th>
+                                    <th>Status</th>
+                                    <th>Nilai (Rp)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyBody">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div id="noHistoryMsg" class="empty-state" style="display:none">
+                        <i class="ph ph-ghost"></i>
+                        <p>Belum ada data di Job Board.</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="addModal" class="modal-overlay">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3>Database Klien Baru</h3>
+                <button class="btn-close" onclick="closeAddModal()">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="input-group">
+                    <label>Nama Lengkap / Brand</label>
+                    <input type="text" id="inputName" placeholder="Contoh: Pak Budi (Mie Ayam)">
+                    <small style="color:red; font-size:10px;">*Harus sama persis dengan nama di Job Board agar sinkron</small>
+                </div>
+                <div class="input-group">
+                    <label>Perusahaan / Industri</label>
+                    <input type="text" id="inputCompany" placeholder="F&B, Fashion, dll">
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>WhatsApp (62...)</label>
+                        <input type="number" id="inputPhone" placeholder="62812345678">
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="inputEmail" placeholder="email@klien.com">
+                    </div>
+                </div>
+                <button class="btn-save" onclick="saveNewClient()">Simpan Database</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/client.js"></script>
+</body>
+</html>

@@ -4,6 +4,39 @@ let jobOrders = JSON.parse(localStorage.getItem('jo_db_v47')) || [];
 
 let currentDetailIndex = null;
 
+// --- CONFIG HARGA (Agar Sinkron dengan Job Order) ---
+const RATES = { 
+    story: 50000, 
+    feed: 50000, 
+    reels: 150000 
+};
+
+// --- HELPER: HITUNG HARGA JOB ---
+function calculateJobPrice(job) {
+    if (job.category === 'General' || job.type === 'Adjust') {
+        return parseInt(job.manualPrice) || 0;
+    } else {
+        if (job.type === 'Story') return RATES.story;
+        else if (job.type === 'Reels') return RATES.reels;
+        else return RATES.feed * (parseInt(job.slides) || 1);
+    }
+}
+
+// --- HELPER: FILTER JOB VALID (KUNCI PERBAIKAN) ---
+// Fungsi ini memastikan job yang di-VOID tidak ikut dihitung
+function getValidClientJobs(clientName) {
+    return jobOrders.filter(job => {
+        // 1. Cek Nama Klien
+        const isClientMatch = job.clientName && job.clientName.toLowerCase() === clientName.toLowerCase();
+        
+        // 2. Cek Status VOID (Ini perbaikannya!)
+        // Job tidak akan dihitung jika statusText-nya "VOIDED"
+        const isNotVoid = job.statusText !== 'VOIDED';
+
+        return isClientMatch && isNotVoid;
+    });
+}
+
 // --- RENDER UTAMA ---
 function renderClients() {
     const grid = document.getElementById('clientGrid');
@@ -16,9 +49,11 @@ function renderClients() {
     const filtered = clients.filter(c => c.name.toLowerCase().includes(search));
 
     filtered.forEach((client, index) => {
-        // Sync Data Job Board
-        const clientJobs = jobOrders.filter(job => job.clientName && job.clientName.toLowerCase() === client.name.toLowerCase());
-        const totalSpent = clientJobs.reduce((sum, job) => sum + parseInt(job.price || 0), 0);
+        // Gunakan Filter Baru (Anti-Void)
+        const clientJobs = getValidClientJobs(client.name);
+        
+        // Hitung Total Spent
+        const totalSpent = clientJobs.reduce((sum, job) => sum + calculateJobPrice(job), 0);
         
         totalRevenue += totalSpent;
         if (totalSpent >= 10000000) vipCount++;
@@ -67,10 +102,15 @@ function renderClients() {
 function openDetailModal(index) {
     currentDetailIndex = index;
     const client = clients[index];
-    const clientJobs = jobOrders.filter(job => job.clientName && job.clientName.toLowerCase() === client.name.toLowerCase());
-    const totalSpent = clientJobs.reduce((sum, job) => sum + parseInt(job.price || 0), 0);
+    
+    // Gunakan Filter Baru (Anti-Void) juga di sini
+    const clientJobs = getValidClientJobs(client.name);
+    
+    // Hitung Total Spent
+    const totalSpent = clientJobs.reduce((sum, job) => sum + calculateJobPrice(job), 0);
     const rupiah = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(totalSpent);
 
+    // Isi Panel Kiri
     document.getElementById('detailInitial').innerText = client.name.charAt(0).toUpperCase();
     document.getElementById('detailName').innerText = client.name;
     document.getElementById('detailCompany').innerText = client.company;
@@ -86,6 +126,7 @@ function openDetailModal(index) {
     document.getElementById('btnWA').href = `https://wa.me/${client.phone}`;
     document.getElementById('btnEmail').href = `mailto:${client.email}`;
 
+    // Isi Panel Kanan (Tabel History)
     const historyBody = document.getElementById('historyBody');
     const noHistory = document.getElementById('noHistoryMsg');
     historyBody.innerHTML = '';
@@ -95,12 +136,19 @@ function openDetailModal(index) {
     } else {
         noHistory.style.display = 'none';
         clientJobs.forEach(job => {
+            const price = calculateJobPrice(job);
+            const statusDisplay = job.statusText || job.stage.toUpperCase();
+            
+            let statusColor = '#94a3b8'; 
+            if(job.stage === 'done' || job.statusText?.includes('Approved')) statusColor = '#10b981'; 
+            if(job.statusText?.includes('Revisi')) statusColor = '#f59e0b'; 
+            
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td style="font-weight:600;">${job.jobName}</td>
+                <td style="font-weight:600;">${job.title}</td>
                 <td>${job.category}</td>
-                <td><span style="padding:2px 6px; border-radius:4px; font-size:10px; background:#f1f5f9;">${job.status}</span></td>
-                <td>Rp ${parseInt(job.price).toLocaleString('id-ID')}</td>
+                <td><span style="padding:4px 8px; border-radius:4px; font-size:10px; background:${statusColor}; color:white;">${statusDisplay}</span></td>
+                <td>Rp ${price.toLocaleString('id-ID')}</td>
             `;
             historyBody.appendChild(row);
         });
@@ -114,7 +162,6 @@ window.onclick = function(event) {
     const detailModal = document.getElementById('detailModal');
     const addModal = document.getElementById('addModal');
 
-    // Jika yang diklik adalah background gelap (overlay), tutup modal
     if (event.target === detailModal) {
         detailModal.style.display = "none";
     }
@@ -154,6 +201,38 @@ function deleteCurrentClient() {
 function openAddModal() { document.getElementById('addModal').style.display = 'flex'; }
 function closeAddModal() { document.getElementById('addModal').style.display = 'none'; }
 function closeDetailModal() { document.getElementById('detailModal').style.display = 'none'; }
+
+// --- BACKUP & RESTORE ---
+function downloadBackup() {
+    const jobs = JSON.parse(localStorage.getItem('jo_db_v47')) || [];
+    const clients = JSON.parse(localStorage.getItem('taufik_crm_v2')) || [];
+    const masterData = { tipe: "MASTER_BACKUP_TAUFIK", tanggal: new Date().toLocaleString(), data_jobs: jobs, data_clients: clients };
+
+    const a = document.createElement('a');
+    a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(masterData));
+    a.download = `DATA_MASTER_${new Date().toISOString().slice(0,10)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+}
+
+function restoreBackup(inputElement) {
+    const file = inputElement.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        try {
+            const content = JSON.parse(e.target.result);
+            if (content.tipe === "MASTER_BACKUP_TAUFIK") {
+                if (confirm("⚠️ Timpa semua data (Job & Client) dengan file backup ini?")) {
+                    localStorage.setItem('jo_db_v47', JSON.stringify(content.data_jobs));
+                    localStorage.setItem('taufik_crm_v2', JSON.stringify(content.data_clients));
+                    alert("✅ Data berhasil dipulihkan!");
+                    location.reload();
+                }
+            } else { alert("❌ Format file salah."); }
+        } catch (err) { alert("❌ File error."); }
+    };
+    reader.readAsText(file);
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     renderClients();
